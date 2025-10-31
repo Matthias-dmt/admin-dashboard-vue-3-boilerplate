@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+/* optional custom layers; @apply will work once the plugin is configured */
+@layer components {
+  .btn { @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium bg-black text-white hover:bg-black/90 disabled:opacity-50 disabled:cursor-not-allowed; }
+  .input { @apply block w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2 focus:ring-black/10; }
+  .label { @apply block text-sm font-medium text-gray-700; }
+  .field-error { @apply mt-1 text-xs text-red-600; }
+}
