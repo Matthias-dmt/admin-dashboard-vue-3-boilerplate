@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <NavBar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
-    <Sidebar :open="sidebarOpen" />
-    <div class="md:pl-64">
+    <Sidebar :open="sidebarOpen" @close="sidebarOpen = false" />
+    <div :class="sidebarOpen ? 'pl-64' : ''">
       <main class="px-4 py-6 sm:px-6 lg:px-8">
         <router-view />
       </main>

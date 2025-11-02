@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/vue'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import {
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
@@ -89,6 +89,7 @@ import {
   HomeIcon,
   UserCircleIcon,
 } from '@heroicons/vue/24/outline'
+import { Transition } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 const auth = useAuthStore()
