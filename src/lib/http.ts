@@ -1,21 +1,35 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig } from 'axios'
 import qs from 'qs'
-import { API_BASE_URL, API_PREFIX } from '@/config/env'
-import { useAuthStore } from '@/stores/auth'
 
-let refreshing = false
-let queue: Array<() => void> = []
+type Tokens = { access?: string; refresh?: string }
+let getTokens: (() => Tokens | undefined) | null = null
+let onRotate: ((access?: string, refresh?: string) => void) | null = null
+let onLogout: (() => void) | null = null
+
+export function registerTokenProvider(fn: () => Tokens | undefined) {
+  getTokens = fn
+}
+export function registerTokenRotationHandlers(opts: {
+  onRotated?: (access?: string, refresh?: string) => void
+  onLogout?: () => void
+}) {
+  onRotate = opts.onRotated ?? null
+  onLogout = opts.onLogout ?? null
+}
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')
+const API_VER = import.meta.env.VITE_API_VERSION
 
 export const http: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL + API_PREFIX,
+  baseURL: `${API_BASE}/${API_VER}`,
   paramsSerializer: (p) => qs.stringify(p, { arrayFormat: 'comma' }),
 })
 
 http.interceptors.request.use((config) => {
-  const auth = useAuthStore()
-  if (auth?.accessToken) {
+  const tokens = getTokens?.()
+  if (tokens?.access) {
     config.headers = config.headers ?? {}
-    config.headers.Authorization = `Bearer ${auth.accessToken}`
+    config.headers.Authorization = `Bearer ${tokens.access}`
   }
   return config
 })
@@ -23,38 +37,24 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(
   (r) => r,
   async (error: AxiosError) => {
-    const auth = useAuthStore()
     const original = error.config as (AxiosRequestConfig & { _retry?: boolean }) | undefined
+    const tokens = getTokens?.()
 
-    if (error.response?.status === 401 && original && !original._retry && auth?.refreshToken) {
+    if (error.response?.status === 401 && original && !original._retry && tokens?.refresh) {
       original._retry = true
-
-      if (!refreshing) {
-        refreshing = true
-        try {
-          const { data } = await axios.post(API_BASE_URL + `${API_PREFIX}/auth/refresh`, {
-            refreshToken: auth.refreshToken,
-          })
-          const newAccess = data?.access?.value ?? data?.access
-          if (newAccess) auth.setAccessToken(newAccess)
-          const newRefresh = data?.refresh?.value ?? data?.refresh
-          if (newRefresh) auth.setRefreshToken(newRefresh)
-          refreshing = false
-          queue.splice(0).forEach((fn) => fn())
-          return http(original)
-        } catch (e) {
-          refreshing = false
-          queue.splice(0)
-          auth?.logout()
-          throw e
-        }
+      try {
+        const { data } = await axios.post(`${API_BASE}/${API_VER}/auth/refresh`, {
+          refreshToken: tokens.refresh,
+        })
+        const newAccess: string | undefined = data?.access?.value ?? data?.access
+        const newRefresh: string | undefined = data?.refresh?.value ?? data?.refresh
+        onRotate?.(newAccess, newRefresh)
+        return http(original)
+      } catch (e) {
+        onLogout?.()
+        throw e
       }
-
-      return new Promise((resolve) => {
-        queue.push(() => resolve(http(original)))
-      })
     }
-
     throw error
-  }
+  },
 )
