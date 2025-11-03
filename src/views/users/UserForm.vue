@@ -2,10 +2,16 @@
   <div class="space-y-6">
     <div class="flex items-center justify-between">
       <h1 class="text-2xl font-semibold tracking-tight">{{ isEdit ? 'Edit user' : 'New user' }}</h1>
-      <RouterLink to="/users" class="text-sm text-gray-600 hover:underline">Back</RouterLink>
+      <RouterLink
+        to="/users"
+        type="button"
+        class="inline-flex items-center rounded-lg btn px-4 py-2 text-sm font-medium"
+      >
+        Back
+      </RouterLink>
     </div>
 
-    <div class="rounded-xl border border-black/10 bg-white p-4 shadow-sm">
+    <div class="rounded-xl card card-padding p-4 shadow-sm">
       <form class="grid gap-4 sm:grid-cols-2" @submit.prevent="onSubmit">
         <div>
           <label class="label" for="email">Email</label>
@@ -47,7 +53,7 @@
           <button class="btn" :disabled="submitting">
             {{ isEdit ? 'Save changes' : 'Create user' }}
           </button>
-          <p v-if="serverError" class="mt-2 text-sm text-red-600">{{ serverError }}</p>
+          <p v-if="serverError" class="mt-2 text-sm text-[rgb(var(--danger))]">{{ serverError }}</p>
         </div>
       </form>
     </div>

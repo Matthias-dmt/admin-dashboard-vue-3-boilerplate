@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--text))]">
     <NavBar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
     <Sidebar :open="sidebarOpen" @close="sidebarOpen = false" />
     <div :class="sidebarOpen ? 'pl-64' : ''">

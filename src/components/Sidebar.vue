@@ -4,26 +4,46 @@
   <aside
     ref="sidebarRef"
     :class="[
-      'fixed inset-y-0 left-0 z-40 w-64 transform border-r border-black/10 bg-white p-4 shadow-lg transition-transform',
+      'fixed inset-y-0 left-0 z-40 w-64 transform border-r bg-[rgb(var(--card)/0.9)] border-[rgb(var(--border))] p-4 shadow-lg transition-transform',
       open ? 'translate-x-0' : '-translate-x-full',
     ]"
     aria-label="Sidebar"
   >
     <nav class="space-y-1">
-      <RouterLink
-        to="/"
-        class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-black/5"
-        :class="{ 'bg-black/5 font-medium': $route.name === 'dashboard' }"
-      >
-        <span>Dashboard</span>
+      <RouterLink :to="{ name: 'dashboard' }" custom v-slot="{ navigate, href, isExactActive }">
+        <a
+          :href="href"
+          class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-black/5 transition-colors"
+          :class="{
+            'bg-black/5 font-medium': isExactActive,
+          }"
+          @click.prevent="
+            () => {
+              emit('close')
+              navigate()
+            }
+          "
+        >
+          Dashboard
+        </a>
       </RouterLink>
 
-      <RouterLink
-        to="/users"
-        class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-black/5"
-        :class="{ 'bg-black/5 font-medium': $route.name?.toString()?.startsWith('users-') }"
-      >
-        <span>Users</span>
+      <RouterLink :to="{ name: 'users-list' }" custom v-slot="{ navigate, href, isExactActive }">
+        <a
+          :href="href"
+          class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-black/5 transition-colors"
+          :class="{
+            'bg-black/5 font-medium': isExactActive,
+          }"
+          @click.prevent="
+            () => {
+              emit('close')
+              navigate()
+            }
+          "
+        >
+          <span>Users</span>
+        </a>
       </RouterLink>
     </nav>
   </aside>

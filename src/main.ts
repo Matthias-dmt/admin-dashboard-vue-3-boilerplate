@@ -4,6 +4,7 @@ import App from './App.vue'
 import './assets/tailwind.css'
 import router from './router'
 
+import { useTheme } from '@/composables/useTheme'
 import { registerTokenProvider, registerTokenRotationHandlers } from '@/lib/http'
 import { useAuthStore } from '@/stores/auth'
 
@@ -13,6 +14,8 @@ app.use(pinia)
 
 const auth = useAuthStore()
 auth.loadFromStorage()
+
+useTheme()
 
 registerTokenProvider(() => ({ access: auth.accessToken, refresh: auth.refreshToken }))
 registerTokenRotationHandlers({
