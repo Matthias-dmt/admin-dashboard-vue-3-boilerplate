@@ -19,6 +19,8 @@
           <option value="created_at:asc">Created asc</option>
           <option value="email:asc">Email asc</option>
           <option value="email:desc">Email desc</option>
+          <option value="last_login_at:desc">Last login desc</option>
+          <option value="last_login_at:asc">Last login asc</option>
         </select>
         <button class="btn">Apply</button>
       </form>

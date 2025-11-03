@@ -2,7 +2,7 @@
   <header
     class="sticky top-0 z-30 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-black/10"
   >
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-14 flex items-center gap-3">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center gap-3">
       <button
         class="inline-flex items-center justify-center rounded-lg p-2 hover:bg-black/5 focus:outline-none"
         @click="$emit('toggle-sidebar')"
